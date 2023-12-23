@@ -14,6 +14,7 @@ public:
 	friend class QueueOfSurvey;
 	void print(Survey Nodes[]);
 	void add_responses(Survey Nodes[]);
+	void printResSurvey(Survey Nodes[]);
 private:
 	string titleOfSurvey,descriptionOfSurvey, numberOfQuestions,twoDMatrixQuestions[20][7], responses; /*** if 5 options then 2 will be also ***/
 	int numberOfQuestionInt, rows;
@@ -21,7 +22,7 @@ private:
 
 
 	
-	
+	friend class QueueOfSurvey;
 	
 };
 
@@ -31,17 +32,15 @@ public:
 	QueueOfSurvey();
 	~QueueOfSurvey();
 	void enqueue(const Survey& instance);
-	void printSurvey() 
-	{
-		
-		print(Nodes);
-	}
-	void adding_responses()
-	{
-		add_responses(Nodes);
-	}
+	void printSurvey() { print(Nodes); }
+	
+	void adding_responses() { add_responses(Nodes); }
+	
+	void printRespondedSurvey() { printResSurvey(Nodes); }
+	
 private:
 	int front,rear,counter,maxSize;
+	
 	Survey* Nodes;
 
 	

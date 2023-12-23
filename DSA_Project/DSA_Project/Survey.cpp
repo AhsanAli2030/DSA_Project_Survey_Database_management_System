@@ -2,7 +2,11 @@
 
 #include<string>
 #include<iomanip>
-int counterSurveys = 0; /**** Main Global variable Storing info of Number of Surveys ****/
+/**** Main Global variable Storing info of Number of Surveys ****/
+int counterSurveys = 0; 
+int* responsedSurveys;
+int responsingSurvey = 0;
+/**** Main Global variable Storing info of Number of Surveys ****/
 Survey::Survey()
 {
 	titleOfSurvey = "None";
@@ -39,6 +43,9 @@ string numbering(int num)
 /**** Function for Printing Number 1st 2nd etc ****/
 void Survey::create_new_survey()
 {
+	cout << "\n\n" << setw(62) << "#####################";
+	cout << "\n\t\t\t\t\t || Survey Creation ||";
+	cout << "\n" << setw(62) << "#####################";
 
 	/**** Function Local Variables ****/
 	string tempStoringFirstQuestion = "None";
@@ -47,7 +54,7 @@ void Survey::create_new_survey()
 	/**** Function Local Variables ****/
 
 	/**** 1.Title of Survey ****/
-	cout << endl << "Title of Survey: ";
+	cout << endl<<endl << "Title of Survey: ";
 	cin.ignore();
 	getline(cin, titleOfSurvey);
 	/**** 1.Description of Survey ****/
@@ -66,12 +73,14 @@ void Survey::create_new_survey()
 	
 	numberOfQuestionInt = stoi(numberOfQuestions);
 	rows = numberOfQuestionInt;
-	cout << setw(60) << "!! Survey Filling !!";
+	cout << endl << setw(60) << "####################";
+	cout <<endl<< setw(60) << "!! Survey Filling !!";
+	cout << endl << setw(60) << "####################"<<endl;
 	for (int i = 0; i < rows; i++)
 	{
-		cout << "\nEnter the " << i + 1 << numbering(i) << " Question : "; cin.clear(); cin.ignore(); getline(cin, twoDMatrixQuestions[i][0]);
+		cout << "\n" << i + 1 << numbering(i) << " Question : ";  getline(cin, twoDMatrixQuestions[i][0]);
 		/**** In the matrix the first line and coloumn will be off Questions and 2nd coloumn will tell teh options and else are options options ****/
-		cout << "How much Options You want : "; again:  cin >> temp; // here again is a label
+		cout << "\nHow much Options You want : "; again:  cin >> temp; // here again is a label
 		while (!(temp>= '0' && temp<= '9'))
 		{
 			cout << "Please Enter a Digit : ";
@@ -79,27 +88,38 @@ void Survey::create_new_survey()
 			cin >> temp;
 		}
 		temp2 = temp - '0';
+		
 		if (temp2 > 5 || temp2 < 0)
 		{
 			cout << "\n\t\t\tInvalid Input !! Enter Again : ";
 			goto again;
 		}
-		twoDMatrixQuestions[i][1] = temp;  /**** Assigning a char to String ****/
 		
+		twoDMatrixQuestions[i][1] = temp;  /**** Assigning a char to String ****/
+		cin.clear(); cin.ignore();
 		for (int j = 0; j < temp2;j++)
 		{
-			cout << "\nOption " << j + 1 << numbering(j) << " : "; cin.clear(); cin.ignore(); getline(cin, twoDMatrixQuestions[i][j+2]);
+			
+			
+			cout << "Option " << j + 1 << numbering(j) << " : ";   getline(cin, twoDMatrixQuestions[i][j + 2]);
+			
 		}
+		
 
 	}
 	
 
 	/****                                           Editing Survey                                          ****/
 	
-	cout << "\n\n\t\t\tDo You want to Edit Survey (y/n) : "; againEditSurvey: cin >> temp;
+	cout << "\n\nDo You want to Edit Survey (y/n) : "; againEditSurvey: cin >> temp;
 	if (temp == 'y' || temp == 'Y')
 	{
-		cout << "\n1.Editing a Question  \t\t 2.Editing option of a Question"; againEditSurvey2: cin >> temp;
+		cout << endl << setw(57) << "#################";
+		cout << endl << setw(57) << "!! Survey Edit !!";
+		cout << endl << setw(57) << "#################" << endl;
+		cout << endl<<setw(75)<<"1.Editing a Question  \t\t 2.Editing option of a Question"; againEditSurvey2: 
+		cout << endl <<endl<< setw(57) << "Please Select : ";
+		cin >> temp;
 		switch (temp)
 		{
 		case '1': {
@@ -160,7 +180,9 @@ void Survey::create_new_survey()
 		
 	}
 
-	cout << endl << "\t\t\t****SURVEY COMPLETED****";
+	cout << endl << setw(60) << "######################";
+	cout << endl << setw(60) << "!! Survey Completed !!";
+	cout << endl << setw(60) << "######################" << endl;
 }
 
 
@@ -180,7 +202,7 @@ QueueOfSurvey::QueueOfSurvey()
 	else if (counterSurveys <= maxSize / 4) maxSize /= 2;
 	front = 0; rear = -1; counter = 0;
 	Nodes = new Survey[maxSize];
-	
+	responsedSurveys = new int[maxSize];
 
 }
 void QueueOfSurvey::enqueue(const Survey& instance)
@@ -208,7 +230,6 @@ void Survey::push(const Survey& inst)
 	for (int i = 0; i < rows; i++)
 	{
 		this->twoDMatrixQuestions[i][0]= inst.twoDMatrixQuestions[i][0];
-	
 		this->twoDMatrixQuestions[i][1] = inst.twoDMatrixQuestions[i][1];
 
 		for (int j = 0; j < stoi(twoDMatrixQuestions[i][1]); j++)
@@ -225,6 +246,7 @@ void Survey::print(Survey Nodes[])
 {
 	/**** Function Variables ****/
 	char temp='0';
+	size_t indexFind = 0;
 	/**** Function Variables ****/
 	if (counterSurveys == 0) cout << endl << "Sorry! No Survey Created ";
 
@@ -250,11 +272,12 @@ void Survey::print(Survey Nodes[])
 		{
 			cout << endl<< Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][0];
 			
-			
+			/**** In Options we have to do Slicing ****/
 
 			for (int j = 0; j < stoi(Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][1]); j++)
 			{
-				cout << "\n\t\t\t"<< Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][j + 2];
+				indexFind = (Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][j + 2]).find('~');
+				cout << "\n\t\t\t"<< (Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][j + 2]).substr(0,indexFind);
 			}
 
 		}
@@ -275,7 +298,7 @@ void Survey::add_responses(Survey Nodes[])
 		cout << endl << "\t\t\tAll Surveys are Listed Below" << endl;
 		for (int i = 0; i < counterSurveys; i++)
 		{
-			cout << i + 1 << "." << Nodes[0].titleOfSurvey << "\t";
+			cout << i + 1 << "." << Nodes[i].titleOfSurvey << "\t";
 		}
 		cout << endl << "Enter The Survey ID : "; cin >> temp;
 		while (temp<'0' || (temp - '0')>counterSurveys)
@@ -283,6 +306,9 @@ void Survey::add_responses(Survey Nodes[])
 			cout << "!! Invalid input !! Enter Again : ";
 			cin >> temp;
 		}
+		/**** Saving the Survey IDS which are Responsed ****/
+		responsedSurveys[responsingSurvey++] = temp - '0' - 1;
+		/**** Saving the Survey IDS which are Responsed ****/
 		cout << endl << "\t\t\t Survey - ID : " << temp;
 		cout << endl << "Title : " << Nodes[(temp - '0') - 1].titleOfSurvey
 			<< endl << "Description : " << Nodes[(temp - '0') - 1].descriptionOfSurvey
@@ -293,9 +319,11 @@ void Survey::add_responses(Survey Nodes[])
 		{
 			cout << "Responses Can Not Be Negative : "; cin >> Nodes[(temp - '0') - 1].responses;
 		}
+		// 400
 
 		for (int i = 0; i < Nodes[(temp - '0') - 1].numberOfQuestionInt; i++)
 		{
+			responsesCounter = stoi(Nodes[(temp - '0') - 1].responses);
 			cout << endl <<"Question - "<<i+1<<" : \n" << Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][0];
 
 
@@ -304,7 +332,7 @@ void Survey::add_responses(Survey Nodes[])
 			{
 
 				cout << "\n\t\t\t" << Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][j + 2];
-				if(j== (stoi(Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][1]))-1)
+				if(j+1== (stoi(Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][1])))
 				{
 					Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][j + 2] = Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][j + 2] + "~" + to_string(responsesCounter);
 				}
@@ -317,9 +345,9 @@ void Survey::add_responses(Survey Nodes[])
 					else
 					{
 						cout << endl << "\n\t\t\tEnter Resposes Recieved : "; cin >> temp2;
-						while (stoi(temp2) < 0)
+						while (stoi(temp2) < 0 || stoi(temp2)>=responsesCounter)
 						{
-							cout << "Responses Can Not Be Negative : "; cin >> temp2;
+							cout << "Responses out of Range : "; cin >> temp2;
 						}
 						Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][j + 2] = Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][j + 2] + "~" + temp2;
 						responsesCounter = responsesCounter  - (stoi(temp2));
@@ -333,6 +361,47 @@ void Survey::add_responses(Survey Nodes[])
 
 
 
+	}
+}
+void Survey::printResSurvey(Survey Nodes[])
+{
+	/**** Function Variables ****/
+	char temp = '0';
+	size_t indexFind=0;
+	/**** Function Variables ****/
+	if (counterSurveys == 0) cout << endl << "Sorry! No Survey Created ";
+
+	else
+	{
+		cout << endl << "\t\t\tAll Responded Surveys are Listed Below" << endl;
+		for (int i = 0; i < responsingSurvey; i++)
+		{
+			cout << i + 1 << "." << Nodes[responsedSurveys[i]].titleOfSurvey << "\t";
+		}
+		cout << endl << "Enter The Responsed Survey ID : "; cin >> temp;
+		while (temp<'0' || (temp - '0')>responsingSurvey)
+		{
+			cout << "!! Invalid input !! Enter Again : ";
+			cin >> temp;
+		}
+		cout << endl << "\t\t\t Survey - ID : " << temp;
+		cout << endl << "Title : " << Nodes[responsedSurveys[(temp - '0') - 1]].titleOfSurvey
+			<< endl << "Description : " << Nodes[responsedSurveys[(temp - '0') - 1]].descriptionOfSurvey
+			<< endl << "Total Questions = " << Nodes[responsedSurveys[(temp - '0') - 1]].numberOfQuestions;
+
+		for (int i = 0; i < Nodes[responsedSurveys[(temp - '0') - 1]].numberOfQuestionInt; i++)
+		{
+			cout << endl << Nodes[responsedSurveys[(temp - '0') - 1]].twoDMatrixQuestions[i][0];
+
+			/**** In Options we have to do Slicing ****/
+
+			for (int j = 0; j < stoi(Nodes[responsedSurveys[(temp - '0') - 1]].twoDMatrixQuestions[i][1]); j++)
+			{
+				indexFind = (Nodes[responsedSurveys[(temp - '0') - 1]].twoDMatrixQuestions[i][j + 2]).find('~');
+				cout << "\n\t\t\t" << (Nodes[responsedSurveys[(temp - '0') - 1]].twoDMatrixQuestions[i][j + 2]).substr(0, indexFind)<<"\t\t\tResponses ="  << (Nodes[responsedSurveys[(temp - '0') - 1]].twoDMatrixQuestions[i][j + 2]).substr(indexFind + 1);
+			}
+
+		}
 	}
 }
 /**** Deleting Memory at End ****/
