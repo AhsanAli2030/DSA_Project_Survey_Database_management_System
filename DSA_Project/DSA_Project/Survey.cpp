@@ -2,6 +2,9 @@
 
 #include<string>
 #include<iomanip>
+#include<cstdlib>
+#include<ctime>
+#include<cctype>
 /**** Main Global variable Storing info of Number of Surveys ****/
 int counterSurveys = 0; 
 int* responsedSurveys;
@@ -14,6 +17,7 @@ Survey::Survey()
 	descriptionOfSurvey = "None";
 	numberOfQuestionInt = 0;
 	rows= 0;
+	checkBoxQuestion = 0;
 	
 }
 Survey::~Survey()
@@ -51,6 +55,7 @@ void Survey::create_new_survey()
 	string tempStoringFirstQuestion = "None";
 	char temp,temp3;
 	int temp2;
+	
 	/**** Function Local Variables ****/
 
 	/**** 1.Title of Survey ****/
@@ -70,13 +75,23 @@ void Survey::create_new_survey()
 		cout << "Please Enter a Digit : ";
 		getline(cin, numberOfQuestions);
 	}
-	
 	numberOfQuestionInt = stoi(numberOfQuestions);
 	rows = numberOfQuestionInt;
+	cout << "How Much CheckBox Question You Want : "; cin >> temp;
+	while (temp - '0' < 0 || temp - '0' > stoi(numberOfQuestions))
+	{
+		cout << "Questions Demanded Out of Range, Enter Again : ";
+		cin >> temp;
+	}
+	checkBoxQuestion = temp - '0';
+	
+	
 	cout << endl << setw(60) << "####################";
 	cout <<endl<< setw(60) << "!! Survey Filling !!";
 	cout << endl << setw(60) << "####################"<<endl;
-	for (int i = 0; i < rows; i++)
+	cin.clear(); cin.ignore();
+	/**** IF check box Question and this matches then this loop will not execute ****/int i = 0;
+	for (; i < rows-checkBoxQuestion; i++)
 	{
 		cout << "\n" << i + 1 << numbering(i) << " Question : ";  getline(cin, twoDMatrixQuestions[i][0]);
 		/**** In the matrix the first line and coloumn will be off Questions and 2nd coloumn will tell teh options and else are options options ****/
@@ -94,6 +109,11 @@ void Survey::create_new_survey()
 			cout << "\n\t\t\tInvalid Input !! Enter Again : ";
 			goto again;
 		}
+		else if (temp2 == 1)
+		{
+			cout << "\n\t\t\tThere must be 2 Options : ";
+			goto again;
+		}
 		
 		twoDMatrixQuestions[i][1] = temp;  /**** Assigning a char to String ****/
 		cin.clear(); cin.ignore();
@@ -108,7 +128,19 @@ void Survey::create_new_survey()
 
 	}
 	
-
+	/**** Check Box Question ****/
+	int k = 0;
+	for (int j = i; j < rows; j++)
+	{
+		if (k < checkBoxQuestion)
+		{
+			cout << "\n" << j + 1 << numbering(j) << " Question : ";  getline(cin, twoDMatrixQuestions[j][0]);
+			twoDMatrixQuestions[j][2] = "Any Random Range";
+			cout << endl << "CheckBox Input : " << twoDMatrixQuestions[j][2];
+			k++;
+		}
+	}
+	
 	/****                                           Editing Survey                                          ****/
 	
 	cout << "\n\nDo You want to Edit Survey (y/n) : "; againEditSurvey: cin >> temp;
@@ -224,20 +256,33 @@ void Survey::push(const Survey& inst)
 	this->descriptionOfSurvey = inst.descriptionOfSurvey;
 	this->numberOfQuestions = inst.numberOfQuestions;
 	this->numberOfQuestionInt = inst.numberOfQuestionInt;
+	
 	this->rows = inst.rows;
-
-
-	for (int i = 0; i < rows; i++)
+	this->checkBoxQuestion = inst.checkBoxQuestion;
+	int i = 0;
+	for (; i < rows - checkBoxQuestion; i++)
 	{
 		this->twoDMatrixQuestions[i][0]= inst.twoDMatrixQuestions[i][0];
 		this->twoDMatrixQuestions[i][1] = inst.twoDMatrixQuestions[i][1];
-
-		for (int j = 0; j < stoi(twoDMatrixQuestions[i][1]); j++)
+		
+		for (int j = 0; j < (stoi(twoDMatrixQuestions[i][1])); j++)
 		{
 			this->twoDMatrixQuestions[i][j+2]=inst.twoDMatrixQuestions[i][j + 2];
 			
 		}
 
+	}
+	/**** Check Box Question ****/
+	int k = 0;
+	for (int j = i; j < rows; j++)
+	{
+		if (k < checkBoxQuestion)
+		{
+			this->twoDMatrixQuestions[j][0] = inst.twoDMatrixQuestions[j][0];
+			twoDMatrixQuestions[j][2] = "Any Random Range";
+			
+			k++;
+		}
 	}
 }
 
@@ -267,8 +312,8 @@ void Survey::print(Survey Nodes[])
 		cout << endl << "Title : " << Nodes[(temp - '0') - 1].titleOfSurvey
 			<< endl << "Description : " << Nodes[(temp - '0') - 1].descriptionOfSurvey
 			<< endl << "Total Questions = " << Nodes[(temp - '0') - 1].numberOfQuestions;
-
-		for (int i = 0; i < Nodes[(temp - '0') - 1].numberOfQuestionInt; i++)
+		int i = 0;
+		for (; i < (Nodes[(temp - '0') - 1].numberOfQuestionInt)- (Nodes[(temp - '0') - 1].checkBoxQuestion); i++)
 		{
 			cout << endl<< Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][0];
 			
@@ -280,6 +325,18 @@ void Survey::print(Survey Nodes[])
 				cout << "\n\t\t\t"<< (Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][j + 2]).substr(0,indexFind);
 			}
 
+		}
+		/**** Check Box Question ****/
+		int k = 0;
+		for (int j = i; j < (Nodes[(temp - '0') - 1].numberOfQuestionInt); j++)
+		{
+			if (k < (Nodes[(temp - '0') - 1].checkBoxQuestion))
+			{
+				cout << "\n" << j + 1 << numbering(j) << " Question : "<< (Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][0]);
+				cout << endl << "CheckBox Input : "<<(Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][2]);
+				
+				k++;
+			}
 		}
 	}
 }
@@ -319,9 +376,9 @@ void Survey::add_responses(Survey Nodes[])
 		{
 			cout << "Responses Can Not Be Negative : "; cin >> Nodes[(temp - '0') - 1].responses;
 		}
-		// 400
-
-		for (int i = 0; i < Nodes[(temp - '0') - 1].numberOfQuestionInt; i++)
+		
+		int i = 0;
+		for (; i < (Nodes[(temp - '0') - 1].numberOfQuestionInt)-(Nodes[(temp - '0') - 1].checkBoxQuestion); i++)
 		{
 			responsesCounter = stoi(Nodes[(temp - '0') - 1].responses);
 			cout << endl <<"Question - "<<i+1<<" : \n" << Nodes[(temp - '0') - 1].twoDMatrixQuestions[i][0];
@@ -345,7 +402,7 @@ void Survey::add_responses(Survey Nodes[])
 					else
 					{
 						cout << endl << "\n\t\t\tEnter Resposes Recieved : "; cin >> temp2;
-						while (stoi(temp2) < 0 || stoi(temp2)>=responsesCounter)
+						while (stoi(temp2) < 0 || stoi(temp2)>responsesCounter)
 						{
 							cout << "Responses out of Range : "; cin >> temp2;
 						}
@@ -358,9 +415,42 @@ void Survey::add_responses(Survey Nodes[])
 			}
 
 		}
+	
+		int k = 0;
+		for (int j = i; j < (Nodes[(temp - '0') - 1].numberOfQuestionInt); j++)
+		{
+			if (k < (Nodes[(temp - '0') - 1].checkBoxQuestion))
+			{
+				cout << "\n" << j + 1 << numbering(j) << " Question : " << (Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][0]);
+				cout << endl << "Data Has Been generated by the Public";
+				srand(static_cast<unsigned int>(time(0)));
+				for (int l = 0; l < stoi(Nodes[(temp - '0') - 1].responses); l++) Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][2] = Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][2]+"@"+to_string(rand() % 501); /**** Limit that will give me betewwen 100 ****/
+				
+				k++;
+			}
+		}
 
 
 
+	}
+}
+// Function to print numbers separated by '@' from a string
+void printNumbers(const std::string& str) {
+	std::string currentNumber;
+
+	for (char ch : str) {
+		if (std::isdigit(ch)) {
+			currentNumber += ch;
+		}
+		else if (ch == '@' && !currentNumber.empty()) {
+			std::cout << currentNumber << " "; // Print the complete number
+			currentNumber.clear();  // Reset for the next number
+		}
+	}
+
+	// Print the last number if any
+	if (!currentNumber.empty()) {
+		std::cout << currentNumber;
 	}
 }
 void Survey::printResSurvey(Survey Nodes[])
@@ -369,7 +459,7 @@ void Survey::printResSurvey(Survey Nodes[])
 	char temp = '0';
 	size_t indexFind=0;
 	/**** Function Variables ****/
-	if (counterSurveys == 0) cout << endl << "Sorry! No Survey Created ";
+	if (counterSurveys == 0 || responsingSurvey==0) cout << endl << "Sorry! No Survey Created ";
 
 	else
 	{
@@ -388,8 +478,8 @@ void Survey::printResSurvey(Survey Nodes[])
 		cout << endl << "Title : " << Nodes[responsedSurveys[(temp - '0') - 1]].titleOfSurvey
 			<< endl << "Description : " << Nodes[responsedSurveys[(temp - '0') - 1]].descriptionOfSurvey
 			<< endl << "Total Questions = " << Nodes[responsedSurveys[(temp - '0') - 1]].numberOfQuestions;
-
-		for (int i = 0; i < Nodes[responsedSurveys[(temp - '0') - 1]].numberOfQuestionInt; i++)
+		int i = 0;
+		for (; i < (Nodes[responsedSurveys[(temp - '0') - 1]].numberOfQuestionInt)- (Nodes[responsedSurveys[(temp - '0') - 1]].checkBoxQuestion); i++)
 		{
 			cout << endl << Nodes[responsedSurveys[(temp - '0') - 1]].twoDMatrixQuestions[i][0];
 
@@ -401,6 +491,24 @@ void Survey::printResSurvey(Survey Nodes[])
 				cout << "\n\t\t\t" << (Nodes[responsedSurveys[(temp - '0') - 1]].twoDMatrixQuestions[i][j + 2]).substr(0, indexFind)<<"\t\t\tResponses ="  << (Nodes[responsedSurveys[(temp - '0') - 1]].twoDMatrixQuestions[i][j + 2]).substr(indexFind + 1);
 			}
 
+		}
+		/**** Check Box Question ****/
+		int toHold = '0';
+		int k = 0;
+		for (int j = i; j < (Nodes[(temp - '0') - 1].numberOfQuestionInt); j++)
+		{
+			if (k < (Nodes[(temp - '0') - 1].checkBoxQuestion))
+			{
+				cout << "\n" << j + 1 << numbering(j) << " Question : " << (Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][0]);
+				cout << endl << "Data Extracted by the Public is here under,\n\n";
+				
+				
+				
+					
+				
+				printNumbers((Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][2]));
+				k++;
+			}
 		}
 	}
 }

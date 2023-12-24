@@ -85,6 +85,7 @@ void survey_management_mysten()
 	if (option == "1")
 	{
 		instanceOfSurvey.create_new_survey();
+		
 		instanceOfQueueOfSurvey.enqueue(instanceOfSurvey);
 
 

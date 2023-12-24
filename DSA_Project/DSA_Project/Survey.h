@@ -17,12 +17,12 @@ public:
 	void printResSurvey(Survey Nodes[]);
 private:
 	string titleOfSurvey,descriptionOfSurvey, numberOfQuestions,twoDMatrixQuestions[20][7], responses; /*** if 5 options then 2 will be also ***/
-	int numberOfQuestionInt, rows;
+	int numberOfQuestionInt, rows, checkBoxQuestion;
+	
 	
 
-
 	
-	friend class QueueOfSurvey;
+	
 	
 };
 
