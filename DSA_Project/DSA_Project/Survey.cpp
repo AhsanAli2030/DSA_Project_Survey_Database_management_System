@@ -97,7 +97,8 @@ void Survey::create_new_survey()
 		cin >> temp;
 	}
 	checkBoxQuestion = temp - '0';
-	
+	system("pause");
+	system("CLS");
 	
 	cout << endl << setw(60) << "####################";
 	cout <<endl<< setw(60) << "!! Survey Filling !!";
@@ -232,6 +233,8 @@ void Survey::create_new_survey()
 	cout << endl << setw(60) << "######################";
 	cout << endl << setw(60) << "!! Survey Completed !!";
 	cout << endl << setw(60) << "######################" << endl;
+	system("pause");
+	system("CLS");
 }
 
 
@@ -352,7 +355,10 @@ void Survey::print(Survey Nodes[])
 			if (k < (Nodes[(temp - '0') - 1].checkBoxQuestion))
 			{
 				cout << "\n" << j + 1 << numbering(j) << " Question : "<< (Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][0]);
-				cout << endl << "CheckBox Input : "<<(Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][2]);
+				cout << endl << "CheckBox Input !\n";
+				indexFind = (Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][2]).find('@');
+				cout << (Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][2]).substr(0,indexFind);
+				
 				
 				k++;
 			}
@@ -454,7 +460,7 @@ void Survey::add_responses(Survey Nodes[])
 	}
 }
 // Function to print numbers separated by '@' from a string
-void printNumbers(const std::string& str) {
+void printNumbers( std::string& str) {
 	std::string currentNumber;
 
 	for (char ch : str) {
@@ -463,6 +469,7 @@ void printNumbers(const std::string& str) {
 		}
 		else if (ch == '@' && !currentNumber.empty()) {
 			std::cout << currentNumber << " "; // Print the complete number
+			
 			currentNumber.clear();  // Reset for the next number
 		}
 	}
@@ -470,6 +477,7 @@ void printNumbers(const std::string& str) {
 	// Print the last number if any
 	if (!currentNumber.empty()) {
 		std::cout << currentNumber;
+		
 	}
 }
 
@@ -497,6 +505,7 @@ void Survey::printResSurvey(Survey Nodes[])
 	/**** Function Variables ****/
 	char temp = '0';
 	size_t indexFind=0;
+	string temp2 = "0";
 	/**** Function Variables ****/
 	if (counterSurveys == 0 || responsingSurvey==0) cout << endl << "Sorry! No Survey Created ";
 
@@ -541,13 +550,14 @@ void Survey::printResSurvey(Survey Nodes[])
 			if (k < (Nodes[(temp - '0') - 1].checkBoxQuestion))
 			{
 				cout << "\n" << j + 1 << numbering(j) << " Question : " << (Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][0]);
-				cout << endl << "Data Extracted by the Public !\n\n";
+				cout << endl << "Data Extracted by the Public is hereunder,\n";
 				
 				
 				
-					
-				
-				printNumbers((Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][2]));
+				indexFind = (Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][2]).find('@');
+				temp2 = (Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][2]).substr(indexFind + 1);
+				printNumbers(temp2);
+				//printNumbers((Nodes[(temp - '0') - 1].twoDMatrixQuestions[j][2]));
 				k++;
 			}
 		}
@@ -666,13 +676,13 @@ void QueueOfSurvey::dequeueResponsed()
 			if (l < (Nodes[responsedSurveys[surveyWhichResponsedAtThatTime]].checkBoxQuestion))
 			{
 				file << "\n" << j + 1 << numbering(j) << " Question : " << (Nodes[responsedSurveys[surveyWhichResponsedAtThatTime]].twoDMatrixQuestions[j][0]);
-				file << endl << "Data Extracted by the Public is here under,\n";
+				file << endl << "Data Extracted by the Public is here under,";
 
 
 
+				file << endl << (Nodes[responsedSurveys[surveyWhichResponsedAtThatTime]].twoDMatrixQuestions[j][2]);
 
-
-				printNumbersForFile((Nodes[responsedSurveys[surveyWhichResponsedAtThatTime]].twoDMatrixQuestions[j][2]));
+				
 				l++;
 			}
 		}
@@ -865,7 +875,7 @@ int QueueOfSurvey::fileRead()
 			
 
 				getline(file, fileData);
-
+				(Nodes[responsedSurveys[i]].twoDMatrixQuestions[j][2]) = fileData;
 
 
 				
