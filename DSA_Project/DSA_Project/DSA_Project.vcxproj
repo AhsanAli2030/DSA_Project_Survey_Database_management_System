@@ -127,10 +127,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CuckooHashing.cpp" />
+    <ClCompile Include="Database.cpp" />
     <ClCompile Include="DSA_Project.cpp" />
     <ClCompile Include="Survey.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CuckooHashing.h" />
+    <ClInclude Include="Database.h" />
     <ClInclude Include="Survey.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
